@@ -96,8 +96,21 @@ class GAMPolicy(Policy):
                 }
             return tree[hb] """
         
+        # jugadas rápidas (ganar / bloquear)
+        # para no gastar MCTS si La jugaad que tenemos es obvia
+        movs_root = valid_moves(board)
 
-     
+        # si puedo ganar en 1, lo hago
+        for c in movs_root:
+            nb = play(board, c, mi_jugador)
+            if winner(nb) == mi_jugador:
+                return c
+
+        # si el otro gana en 1, bloqueo
+        for c in movs_root:
+            nb = play(board, c, -mi_jugador)
+            if winner(nb) == -mi_jugador:
+                return c     
             
         #Online Policy Improvement con MCTS ligero SOLO EN RAÍZ
         hb_root = hash_board(board)
