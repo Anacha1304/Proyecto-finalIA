@@ -1,5 +1,5 @@
 import numpy as np
-from connect4.policy import Policy
+from tournament.connect4.policy import Policy
 import random
 import math
 import time
@@ -36,8 +36,14 @@ class GAMPolicy(Policy):
 
         if not hasattr(self, "c_ucb"):
             self.c_ucb = 1.4
-                
+        
 
+
+        # Marca de tiempo para respetar el timeout
+        start_time = time.time()
+
+        budget = min(self.time_out * 0.25, 2.0)
+        deadline = start_time + budget
 
         # Contamos cuantos 1 hay en el tablero a traves de contador cuantos1
         cuantos1 = 0
@@ -58,7 +64,9 @@ class GAMPolicy(Policy):
             mi_jugador = 1
         # Si son diferentes somos -1
         else:
-           mi_jugador = -1
+            mi_jugador = -1
+
+
 
         # convertir tablero a string (hash del estado)
         def hash_board(b):
@@ -96,8 +104,9 @@ class GAMPolicy(Policy):
                 }
             return tree[hb] """
         
+
         # jugadas rápidas (ganar / bloquear)
-        # para no gastar MCTS si La jugaad que tenemos es obvia
+        # para no gastar MCTS si es obvio.
         movs_root = valid_moves(board)
 
         # si puedo ganar en 1, lo hago
@@ -110,7 +119,7 @@ class GAMPolicy(Policy):
         for c in movs_root:
             nb = play(board, c, -mi_jugador)
             if winner(nb) == -mi_jugador:
-                return c     
+                return c
             
         #Online Policy Improvement con MCTS ligero SOLO EN RAÍZ
         hb_root = hash_board(board)
@@ -169,6 +178,7 @@ class GAMPolicy(Policy):
             for c in movs_root:
                 s += ensure_root_stat(c)["visitas"]
             return s
+
 
         # loop de mejora online mientras haya tiempo
         while time.time() < deadline:
