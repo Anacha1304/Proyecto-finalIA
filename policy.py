@@ -38,6 +38,28 @@ class GAMPolicy(Policy):
             self.c_ucb = 1.4
                 
 
+
+        # Contamos cuantos 1 hay en el tablero a traves de contador cuantos1
+        cuantos1 = 0
+        for fila in range(6):
+            for columna in range(7):
+                if board[fila][columna] == 1:
+                    cuantos1 = cuantos1 + 1
+
+        # Contamos cuantos -1 hay en el tablero a traves de contador cuantos_1
+        cuantos_1 = 0
+        for fila in range(6):
+            for columna in range(7):
+                if board[fila][columna] == -1:
+                    cuantos_1 = cuantos_1 + 1
+
+        # Se hace la comparacion de contadores si son iguales soy 1
+        if cuantos1 == cuantos_1:
+            mi_jugador = 1
+        # Si son diferentes somos -1
+        else:
+           mi_jugador = -1
+
         # convertir tablero a string (hash del estado)
         def hash_board(b):
             # más rápido que str(list)
